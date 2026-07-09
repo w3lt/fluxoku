@@ -72,17 +72,17 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     toastTimer.current = setTimeout(() => patch({ toast: '' }), TOAST_MS)
   }
 
-  const snapshot = (): Snapshot => ({
-    grid: state.game!.grid.slice(),
-    ball: state.game!.ball,
-    resetsLeft: state.game!.resetsLeft,
+  const snapshot = (game: GameSession): Snapshot => ({
+    grid: game.grid.slice(),
+    ball: game.ball,
+    resetsLeft: game.resetsLeft,
     notes: state.notes.slice(),
     moves: state.moves,
   })
 
-  const pushUndo = (): Snapshot[] => {
+  const pushUndo = (game: GameSession): Snapshot[] => {
     const stack = state.undoStack.slice(-UNDO_LIMIT)
-    stack.push(snapshot())
+    stack.push(snapshot(game))
     return stack
   }
 
@@ -171,7 +171,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
         return
       }
       const notes = state.notes.slice()
-      const stack = pushUndo()
+      const stack = pushUndo(g)
       notes[i] ^= 1 << d
       patch({ notes, undoStack: stack })
       return
@@ -206,7 +206,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     }
 
     // Legal move: place the digit and hand the ball possession of that cell.
-    const stack = pushUndo()
+    const stack = pushUndo(g)
     const grid = g.grid.slice()
     grid[i] = d
     const notes = state.notes.slice()
@@ -242,7 +242,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       showToast('The ball must stay on a filled cell. Use undo instead.')
       return
     }
-    const stack = pushUndo()
+    const stack = pushUndo(g)
     const grid = g.grid.slice()
     grid[i] = 0
     afterMutation({ game: { ...g, grid }, undoStack: stack })
@@ -302,7 +302,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       showToast('No legal moves from that cell.')
       return
     }
-    const stack = pushUndo()
+    const stack = pushUndo(g)
     afterMutation({
       game: { ...g, ball: i, resetsLeft: g.resetsLeft - 1 },
       undoStack: stack,
