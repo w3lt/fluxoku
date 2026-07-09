@@ -1,0 +1,10 @@
+@use 'styles/palette' as *;
+
+.app {
+  min-height: 100vh;
+  background: $page-gradient;
+  color: $ink;
+  font-family: $font-body;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,98 @@
+@use '../styles/palette' as *;
+
+.container {
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.trapped {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: $banner-bg;
+  color: $banner-text;
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+.trappedTitle {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.trappedSub {
+  font-size: 13px;
+  color: $banner-sub;
+  margin-top: 2px;
+}
+
+.trappedActions {
+  display: flex;
+  gap: 8px;
+}
+
+.resetBtn {
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 999px;
+  background: $accent-gradient;
+  color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    background: $accent-gradient-hover;
+  }
+}
+
+.ghostBtn {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border: 1px solid $banner-border;
+  border-radius: 999px;
+  background: transparent;
+  color: $banner-text;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $banner-text;
+  }
+}
+
+.resetMode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: $info-bg;
+  border: 1px solid $info-border;
+  border-radius: 14px;
+  padding: 12px 18px;
+}
+
+.resetModeText {
+  font-size: 14px;
+  font-weight: 600;
+  color: $info-text;
+}
+
+.cancelBtn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 1px solid $info-border;
+  border-radius: 999px;
+  background: transparent;
+  color: $info-text;
+  cursor: pointer;
+
+  &:hover {
+    background: $info-hover-bg;
+  }
+}

@@ -1,0 +1,62 @@
+// Design tokens lifted verbatim from Fluxoku.dc.html.
+
+// Type
+$font-display: 'Zen Maru Gothic', sans-serif;
+$font-body: 'Quicksand', 'Zen Maru Gothic', sans-serif;
+$font-digits: 'M PLUS Rounded 1c', sans-serif;
+
+// Surfaces
+$page-bg: #f6f5fd;
+$page-gradient: linear-gradient(180deg, #f0f9ff 0%, #f8f1fe 100%);
+$surface: #ffffff;
+
+// Text
+$ink: #3d3660;
+$ink-soft: #4e4870;
+$text-muted: #7e7a9e;
+$text-faint: #938fb0;
+$kbd-hint: #bdb8d6;
+
+// Lines
+$line: #e0dcf0; // cards and controls
+$grid-line: #e7e3f5; // thin cell separators
+
+// Accent
+$blue: #4bb8fa;
+$purple: #b331f1;
+$purple-deep: #8f27ce;
+$blue-hover: #2fa3ee;
+$purple-hover: #9c1dd9;
+$accent-gradient: linear-gradient(135deg, $blue, $purple);
+$accent-gradient-hover: linear-gradient(135deg, $blue-hover, $purple-hover);
+
+// Board cell backgrounds
+$cell-given: #efedfa;
+$cell-peer: #f3f0fc;
+$cell-peer-given: #e9e5f7;
+$cell-same: #e4def6;
+$cell-reach: #ede7fd;
+$cell-opened: #dcd0fb;
+$cell-ball: #e3d9fc;
+$cell-reset-target: #e2eefd;
+$cell-conflict: #ffcfd6;
+$error: #e5484d;
+
+// Dark banner / pills
+$banner-bg: #3d3660;
+$banner-text: #f6f5fd;
+$banner-sub: #bdb8d6;
+$banner-border: #5f5887;
+
+// Reset-mode info banner
+$info-bg: #e4f0fe;
+$info-border: #9bd6fc;
+$info-text: #0f6fb0;
+$info-hover-bg: #d5e6fc;
+
+// Shadows
+$shadow-board: 0 20px 40px -28px rgba(90, 82, 150, 0.45);
+$shadow-pop: 0 30px 60px -20px rgba(90, 82, 150, 0.5);
+$shadow-pill: 0 12px 30px -10px rgba(90, 82, 150, 0.5);
+$overlay-scrim: rgba(90, 82, 150, 0.5);
+$ball-glow: rgba(139, 92, 246, 0.45);

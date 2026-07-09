@@ -1,0 +1,97 @@
+@use '../styles/palette' as *;
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: $overlay-scrim;
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 40;
+}
+
+.card {
+  background: $surface;
+  border-radius: 20px;
+  padding: 36px 36px 28px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: $shadow-pop;
+}
+
+.title {
+  font-family: $font-display;
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 15px;
+  color: $purple-deep;
+  font-weight: 700;
+}
+
+.stats {
+  margin: 26px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.statLabel {
+  color: $text-faint;
+}
+
+.statValue {
+  font-family: $font-digits;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.primaryBtn {
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: $accent-gradient;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: $accent-gradient-hover;
+  }
+}
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+}
+
+.ghostBtn {
+  flex: 1;
+  padding: 11px;
+  border: 1px solid $line;
+  border-radius: 12px;
+  background: transparent;
+  color: $ink-soft;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $purple-deep;
+  }
+}

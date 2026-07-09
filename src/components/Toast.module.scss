@@ -1,0 +1,18 @@
+@use '../styles/palette' as *;
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: $banner-bg;
+  color: $banner-text;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 11px 20px;
+  border-radius: 999px;
+  z-index: 50;
+  box-shadow: $shadow-pill;
+  max-width: 90vw;
+  text-align: center;
+}

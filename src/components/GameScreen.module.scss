@@ -1,0 +1,90 @@
+@use '../styles/palette' as *;
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+  padding: 5px 12px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: $surface;
+}
+
+.timer {
+  font-family: $font-digits;
+  font-size: 14px;
+  font-weight: 500;
+  color: $ink-soft;
+  padding: 5px 12px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: $surface;
+  min-width: 64px;
+  text-align: center;
+}
+
+.newBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: $ink-soft;
+  padding: 6px 14px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: $purple-deep;
+    color: $purple-deep;
+  }
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+  padding: 16px 20px 48px;
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.generating {
+  width: min(94vw, 520px);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: $surface;
+  color: $text-faint;
+  font-size: 15px;
+  font-weight: 500;
+}

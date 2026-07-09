@@ -1,0 +1,46 @@
+@use '../styles/palette' as *;
+
+.logo {
+  font-family: $font-display;
+  letter-spacing: -0.01em;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: $purple;
+}
+
+.large {
+  font-weight: 700;
+  font-size: clamp(52px, 10vw, 80px);
+  line-height: 1;
+  background-image: linear-gradient(120deg, $blue 10%, $purple 85%);
+
+  .o {
+    border-width: 4px;
+    width: 0.62em;
+    height: 0.62em;
+    line-height: 0.52em;
+    vertical-align: baseline;
+  }
+}
+
+.small {
+  font-weight: 500;
+  font-size: 26px;
+  background-image: linear-gradient(120deg, $blue, $purple);
+
+  .o {
+    border-width: 2px;
+    width: 0.6em;
+    height: 0.6em;
+  }
+}
+
+.o {
+  display: inline-block;
+  border-style: solid;
+  border-color: $purple;
+  border-radius: 50%;
+  color: transparent;
+  margin: 0 0.02em;
+}

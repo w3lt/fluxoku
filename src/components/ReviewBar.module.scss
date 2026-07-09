@@ -1,0 +1,37 @@
+@use '../styles/palette' as *;
+
+.bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: $banner-bg;
+  color: $banner-text;
+  border-radius: 999px;
+  padding: 10px 10px 10px 20px;
+  z-index: 30;
+  box-shadow: $shadow-pill;
+}
+
+.text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.playBtn {
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: $accent-gradient;
+  color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    background: $accent-gradient-hover;
+  }
+}

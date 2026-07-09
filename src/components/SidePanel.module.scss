@@ -1,0 +1,158 @@
+@use '../styles/palette' as *;
+
+.panel {
+  width: min(94vw, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid $line;
+  border-radius: 14px;
+  background: $surface;
+}
+
+.statusLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.tokens {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.token {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid $purple;
+  background: transparent;
+}
+
+.tokenFilled {
+  background: $accent-gradient;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.padKey {
+  aspect-ratio: 1.35;
+  border: 1px solid $line;
+  border-radius: 12px;
+  background: $surface;
+  font-family: $font-digits;
+  font-size: 24px;
+  font-weight: 500;
+  color: $ink;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    border-color: $purple;
+    background: #f1ecfe;
+  }
+}
+
+.padKeyMuted {
+  opacity: 0.3;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.controlBtn {
+  padding: 12px 10px;
+  border: 1px solid $line;
+  border-radius: 12px;
+  background: $surface;
+  font-size: 14px;
+  font-weight: 600;
+  color: $ink;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    border-color: $purple-deep;
+  }
+}
+
+.controlMuted {
+  opacity: 0.4;
+}
+
+.notesActive {
+  border-color: $purple-deep;
+  background: $cell-reach;
+  color: $purple-deep;
+}
+
+.resetIdle {
+  opacity: 0.55;
+}
+
+.resetArmed {
+  border-color: transparent;
+  background: $accent-gradient;
+  color: #f8f5ff;
+}
+
+.kbd {
+  color: $kbd-hint;
+  font-weight: 500;
+}
+
+.kbdDim {
+  opacity: 0.55;
+  font-weight: 500;
+}
+
+.kbdReset {
+  opacity: 0.75;
+  font-weight: 500;
+}
+
+.legend {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: $text-faint;
+  padding: 0 4px;
+}
+
+.legendDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $accent-gradient;
+  opacity: 0.75;
+}
+
+.legendBall {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid $purple;
+  border-radius: 50%;
+  vertical-align: -1px;
+}

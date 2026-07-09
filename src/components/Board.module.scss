@@ -1,0 +1,176 @@
+@use '../styles/palette' as *;
+
+.board {
+  position: relative;
+  width: min(94vw, 520px);
+  aspect-ratio: 1;
+  border: 2px solid $ink;
+  border-radius: 14px;
+  overflow: hidden;
+  background: $surface;
+  box-shadow: $shadow-board;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  border-right: 1px solid $grid-line;
+  border-bottom: 1px solid $grid-line;
+  transition:
+    background 0.35s ease,
+    opacity 0.35s ease,
+    box-shadow 0.12s ease;
+
+  // Thick separators between 3x3 boxes; none along the outer frame.
+  &:nth-child(3n) {
+    border-right: 2px solid $ink;
+  }
+
+  &:nth-child(9n) {
+    border-right: none;
+  }
+
+  &:nth-child(n + 19):nth-child(-n + 27),
+  &:nth-child(n + 46):nth-child(-n + 54) {
+    border-bottom: 2px solid $ink;
+  }
+
+  &:nth-child(n + 73):nth-child(-n + 81) {
+    border-bottom: none;
+  }
+}
+
+.dimmed {
+  opacity: 0.72;
+}
+
+// One background class per cell; precedence is resolved in buildCellViews.
+.bgPlain {
+  background: $surface;
+}
+
+.bgGiven {
+  background: $cell-given;
+}
+
+.bgPeer {
+  background: $cell-peer;
+}
+
+.bgPeerGiven {
+  background: $cell-peer-given;
+}
+
+.bgSame {
+  background: $cell-same;
+}
+
+.bgReach {
+  background: $cell-reach;
+}
+
+.bgOpened {
+  background: $cell-opened;
+}
+
+.bgBall {
+  background: $cell-ball;
+}
+
+.bgResetTarget {
+  background: $cell-reset-target;
+}
+
+.bgConflict {
+  background: $cell-conflict;
+}
+
+.ringSelected {
+  box-shadow: inset 0 0 0 2px $purple;
+}
+
+.ringTarget {
+  box-shadow: inset 0 0 0 2px $blue-hover;
+}
+
+.digit {
+  font-family: $font-digits;
+  font-size: min(6vw, 30px);
+  line-height: 1;
+  color: $purple-deep;
+  font-weight: 600;
+}
+
+.digitGiven {
+  color: $ink;
+  font-weight: 500;
+}
+
+.digitError {
+  color: $error;
+}
+
+.notes {
+  position: absolute;
+  inset: 6%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-digits;
+    font-size: min(2.2vw, 11px);
+    color: $text-faint;
+  }
+}
+
+.dot {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: $accent-gradient;
+  opacity: 0.6;
+}
+
+.ball {
+  position: absolute;
+  width: 11.111%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    left 0.32s cubic-bezier(0.3, 0.9, 0.3, 1.1),
+    top 0.32s cubic-bezier(0.3, 0.9, 0.3, 1.1);
+}
+
+.ballRing {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  background: $accent-gradient;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
+  filter: drop-shadow(0 0 5px $ball-glow);
+}
