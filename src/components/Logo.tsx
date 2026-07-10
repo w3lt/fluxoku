@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 
+import { getLogoAnimation } from "./Logo.animation";
 import styles from "./Logo.module.scss";
 
 interface LogoProps {
@@ -9,6 +10,7 @@ interface LogoProps {
 /** Gradient wordmark; the "o" is drawn as a ring echoing the ball marker. */
 export function Logo({ size }: LogoProps) {
   const shouldReduceMotion = useReducedMotion();
+  const animation = getLogoAnimation(size, Boolean(shouldReduceMotion));
 
   return (
     <span
@@ -18,16 +20,8 @@ export function Logo({ size }: LogoProps) {
       <motion.span
         className={styles.o}
         aria-hidden="true"
-        animate={shouldReduceMotion ? { y: 0 } : { y: [0, -20, 0] }}
-        transition={
-          shouldReduceMotion
-            ? undefined
-            : {
-              duration: 0.9,
-              ease: "easeInOut",
-              repeat: Infinity,
-            }
-        }
+        animate={animation.animate}
+        transition={animation.transition}
       />
       ku
     </span>
