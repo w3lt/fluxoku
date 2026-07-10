@@ -85,8 +85,49 @@
   background: $cell-opened;
 }
 
+// Current (ball) cell: a gradient line segment runs around the cell border.
+// ::before is an oversized spinning conic gradient; ::after covers the middle
+// with the cell tint so only a thin frame of it stays visible. isolation plus
+// negative z-index keep both layers under the digit, notes and dot.
 .bgBall {
   background: $cell-ball;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    inset: -50%;
+    // 180deg of arc = half the perimeter, i.e. two cell sides of visible line.
+    background: conic-gradient(
+      transparent 0deg 180deg,
+      rgba($blue, 0.9) 250deg,
+      $purple 358deg,
+      transparent 360deg
+    );
+    animation: ball-border-run 2.2s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 2px;
+    background: $cell-ball;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      animation: none;
+    }
+  }
+}
+
+@keyframes ball-border-run {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .bgResetTarget {
@@ -152,25 +193,3 @@
   opacity: 0.6;
 }
 
-.ball {
-  position: absolute;
-  width: 11.111%;
-  aspect-ratio: 1;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    left 0.32s cubic-bezier(0.3, 0.9, 0.3, 1.1),
-    top 0.32s cubic-bezier(0.3, 0.9, 0.3, 1.1);
-}
-
-.ballRing {
-  width: 78%;
-  height: 78%;
-  border-radius: 50%;
-  background: $accent-gradient;
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px));
-  filter: drop-shadow(0 0 5px $ball-glow);
-}

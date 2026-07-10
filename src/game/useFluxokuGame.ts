@@ -2,7 +2,7 @@
 // message, highlight timing, and keyboard binding matches Fluxoku.dc.html.
 
 import { useEffect, useRef, useState } from 'react'
-import { colOf, conflictInfo, reachList, reaches, rowOf } from '../engine/board'
+import { conflictInfo, reachList, reaches } from '../engine/board'
 import { generatePuzzle, type DifficultyKey } from '../engine/generator'
 import { computeTrapped, fmtTime, isSolved, legalMoveFrom } from './logic'
 import type { GameOptions } from './options'
@@ -36,8 +36,6 @@ export interface FluxokuGame {
   pad: PadKey[]
   /** One entry per reset token; true while still available. */
   tokens: boolean[]
-  ballLeft: string
-  ballTop: string
   showTimer: boolean
   timerText: string
   trappedVisible: boolean
@@ -441,8 +439,6 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     cells: buildCellViews(state, options),
     pad: buildPadViews(state, options),
     tokens,
-    ballLeft: g ? `${(colOf(g.ball) * 100) / 9}%` : '0%',
-    ballTop: g ? `${(rowOf(g.ball) * 100) / 9}%` : '0%',
     showTimer: options.showTimer && ready,
     timerText: fmtTime(state.elapsedSec),
     trappedVisible: trapped && !state.resetMode,

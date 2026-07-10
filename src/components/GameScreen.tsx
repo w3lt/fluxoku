@@ -49,12 +49,7 @@ export function GameScreen({ game, onOpenSettings }: GameScreenProps) {
 
         {game.ready && (
           <>
-            <Board
-              cells={game.cells}
-              ballLeft={game.ballLeft}
-              ballTop={game.ballTop}
-              onCellClick={actions.cellClick}
-            />
+            <Board cells={game.cells} onCellClick={actions.cellClick} />
             <SidePanel
               tokens={game.tokens}
               pad={game.pad}

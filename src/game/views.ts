@@ -66,11 +66,13 @@ export function buildCellViews(state: GameState, options: GameOptions): CellView
     if (inReach) bg = 'reach'
     if (opened.has(i)) bg = 'opened'
     if (isBall) bg = 'ball'
-    if (state.resetMode) bg = resetTargets.has(i) ? 'resetTarget' : isGiven ? 'given' : 'plain'
+    // Reset mode keeps the ball marker visible so the player knows what they are moving.
+    if (state.resetMode && !isBall) bg = resetTargets.has(i) ? 'resetTarget' : isGiven ? 'given' : 'plain'
     if (conflicted.has(i)) bg = 'conflict'
 
     let ring: CellView['ring'] = null
-    if (sel === i && !state.resetMode) ring = 'selected'
+    // The ball cell's animated border already marks it; skip the selection ring there.
+    if (sel === i && !state.resetMode && !isBall) ring = 'selected'
     if (state.resetMode && resetTargets.has(i)) ring = 'target'
 
     const error = (warn && v > 0 && !isGiven && v !== g.solution[i]) || (conflicted.has(i) && v > 0)

@@ -16,21 +16,16 @@ const BG_CLASS: Record<CellBg, string> = {
 
 interface BoardProps {
   cells: CellView[]
-  ballLeft: string
-  ballTop: string
   onCellClick: (i: number) => void
 }
 
-export function Board({ cells, ballLeft, ballTop, onCellClick }: BoardProps) {
+export function Board({ cells, onCellClick }: BoardProps) {
   return (
     <div className={styles.board}>
       <div className={styles.grid}>
         {cells.map((cell) => (
           <BoardCell key={cell.index} cell={cell} onClick={() => onCellClick(cell.index)} />
         ))}
-      </div>
-      <div className={styles.ball} style={{ left: ballLeft, top: ballTop }} aria-hidden="true">
-        <div className={styles.ballRing} />
       </div>
     </div>
   )
