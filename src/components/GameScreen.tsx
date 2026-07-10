@@ -2,14 +2,16 @@ import type { FluxokuGame } from '../game/useFluxokuGame'
 import { Board } from './Board'
 import { ResetModeBanner, TrappedBanner } from './GameBanners'
 import { Logo } from './Logo'
+import { SettingsButton } from './SettingsButton'
 import { SidePanel } from './SidePanel'
 import styles from './GameScreen.module.scss'
 
 interface GameScreenProps {
   game: FluxokuGame
+  onOpenSettings: () => void
 }
 
-export function GameScreen({ game }: GameScreenProps) {
+export function GameScreen({ game, onOpenSettings }: GameScreenProps) {
   const { state, actions } = game
   return (
     <section className={styles.screen}>
@@ -21,6 +23,11 @@ export function GameScreen({ game }: GameScreenProps) {
           <button type="button" className={styles.newBtn} onClick={actions.goMenu}>
             New puzzle
           </button>
+          <SettingsButton
+            className={styles.settingsBtn}
+            iconClassName={styles.settingsIcon}
+            onClick={onOpenSettings}
+          />
         </div>
       </header>
 

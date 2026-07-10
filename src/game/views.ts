@@ -47,7 +47,7 @@ export function buildCellViews(state: GameState, options: GameOptions): CellView
   const resetTargets = new Set<number>()
   if (state.resetMode) {
     for (let i = 0; i < CELL_COUNT; i++) {
-      if (g.grid[i] && i !== g.ball && legalMoveFrom(g.grid, i)) resetTargets.add(i)
+      if (g.grid[i] && i !== g.ball && legalMoveFrom(g.grid, i, options.autoAssist)) resetTargets.add(i)
     }
   }
 
@@ -112,14 +112,15 @@ export interface PadKey {
   enabled: boolean
 }
 
-export function buildPadViews(state: GameState): PadKey[] {
+export function buildPadViews(state: GameState, options: GameOptions): PadKey[] {
   const g = state.game
   if (!g) return []
   const sel = state.selected
   let cands: number[] | null = null
   if (sel !== null && !g.grid[sel]) {
     if (state.notesMode) cands = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    else if (reaches(g.ball, sel)) cands = candidatesFor(g.grid, sel)
+    else if (reaches(g.ball, sel))
+      cands = options.autoAssist ? candidatesFor(g.grid, sel) : [1, 2, 3, 4, 5, 6, 7, 8, 9]
     else cands = []
   }
   const pad: PadKey[] = []

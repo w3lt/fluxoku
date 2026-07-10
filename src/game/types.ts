@@ -35,7 +35,6 @@ export interface GameState {
   notesMode: boolean
   /** Choosing a filled cell to relocate the ball to. */
   resetMode: boolean
-  trapped: boolean
   won: boolean
   reviewing: boolean
   undoStack: Snapshot[]
@@ -59,7 +58,6 @@ export const initialGameState: GameState = {
   selected: null,
   notesMode: false,
   resetMode: false,
-  trapped: false,
   won: false,
   reviewing: false,
   undoStack: [],

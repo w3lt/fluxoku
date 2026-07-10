@@ -63,6 +63,28 @@
   }
 }
 
+.settingsBtn {
+  display: inline-flex;
+  align-items: center;
+  color: $ink-soft;
+  padding: 5px 11px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: $purple-deep;
+    color: $purple-deep;
+  }
+}
+
+.settingsIcon {
+  width: 16px;
+  height: 16px;
+}
+
 .layout {
   display: flex;
   flex-wrap: wrap;

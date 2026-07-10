@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { colOf, conflictInfo, reachList, reaches, rowOf } from '../engine/board'
 import { generatePuzzle, type DifficultyKey } from '../engine/generator'
-import { computeTrapped, fmtTime, legalMoveFrom } from './logic'
+import { computeTrapped, fmtTime, isSolved, legalMoveFrom } from './logic'
 import type { GameOptions } from './options'
 import { initialGameState, type GameSession, type GameState, type Snapshot } from './types'
 import { buildCellViews, buildPadViews, type CellView, type PadKey } from './views'
@@ -86,20 +86,32 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     return stack
   }
 
-  /** Applies a change to the session, then recomputes won/trapped from it. */
+  // Trapped is derived every render rather than stored: it depends on the
+  // auto-assist setting, which can flip mid-puzzle ("changes apply
+  // immediately, including to a puzzle in progress").
+  const trapped =
+    !!state.game &&
+    !state.won &&
+    computeTrapped(state.game.grid, state.game.ball, options.autoAssist)
+
+  /** Applies a change to the session, then recomputes won from it. */
   const afterMutation = (next: Partial<GameState> & { game: GameSession }) => {
     const g = next.game
-    const won = !g.grid.includes(0)
-    const trapped = won ? false : computeTrapped(g.grid, g.ball)
+    // With auto-assist on, conflicts are blocked so a full board is a win.
+    // Off, wrong digits are accepted and only a correct board counts.
+    const full = !g.grid.includes(0)
+    const won = full && (options.autoAssist || isSolved(g.grid, g.solution))
     setState((s) => ({
       ...s,
       ...next,
       won: won || (next.won ?? false),
-      trapped,
       // Freeze the timer at its exact final value; the tick interval stops on win.
       elapsedSec: won ? Math.floor((Date.now() - s.startTime) / 1000) : s.elapsedSec,
       reviewing: won ? false : (next.reviewing ?? s.reviewing),
     }))
+    if (full && !won) {
+      showToast('The board is full, but some numbers are wrong. Erase or undo to fix them.')
+    }
   }
 
   const start = (difficulty: DifficultyKey) => {
@@ -142,7 +154,6 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       selected: g.startBall,
       notesMode: false,
       resetMode: false,
-      trapped: false,
       won: false,
       reviewing: false,
       undoStack: [],
@@ -190,7 +201,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       return
     }
 
-    const conflict = conflictInfo(g.grid, i, d)
+    const conflict = options.autoAssist ? conflictInfo(g.grid, i, d) : null
     if (conflict) {
       const msg =
         conflict.unit === 'row'
@@ -257,7 +268,9 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     const stack = state.undoStack.slice()
     const snap = stack.pop()!
     const restored = { ...g, grid: snap.grid, ball: snap.ball, resetsLeft: snap.resetsLeft }
-    const won = !restored.grid.includes(0)
+    const won =
+      !restored.grid.includes(0) &&
+      (options.autoAssist || isSolved(restored.grid, restored.solution))
     patch({
       game: restored,
       notes: snap.notes,
@@ -267,7 +280,6 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       won,
       reviewing: false,
       resetMode: false,
-      trapped: won ? false : computeTrapped(restored.grid, restored.ball),
       selected: snap.ball,
       justOpened: [],
       conflicts: [],
@@ -281,7 +293,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       patch({ resetMode: false })
       return
     }
-    if (!state.trapped) {
+    if (!trapped) {
       showToast('Reset is available when you are trapped.')
       return
     }
@@ -298,7 +310,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       showToast('The ball is already here.')
       return
     }
-    if (!legalMoveFrom(g.grid, i)) {
+    if (!legalMoveFrom(g.grid, i, options.autoAssist)) {
       showToast('No legal moves from that cell.')
       return
     }
@@ -427,19 +439,19 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     state,
     ready,
     cells: buildCellViews(state, options),
-    pad: buildPadViews(state),
+    pad: buildPadViews(state, options),
     tokens,
     ballLeft: g ? `${(colOf(g.ball) * 100) / 9}%` : '0%',
     ballTop: g ? `${(rowOf(g.ball) * 100) / 9}%` : '0%',
     showTimer: options.showTimer && ready,
     timerText: fmtTime(state.elapsedSec),
-    trappedVisible: state.trapped && !state.resetMode,
+    trappedVisible: trapped && !state.resetMode,
     trappedSub: canReset ? 'Reset possession or undo your last move.' : 'No resets left. Undo or restart.',
     canReset,
     resetBtnLabel: g ? `Use reset (${g.resetsLeft} left)` : '',
     canUndo: state.undoStack.length > 0,
     canErase,
-    resetArmed: state.trapped && canReset,
+    resetArmed: trapped && canReset,
     showWin: state.won && !state.reviewing,
     showReviewBar: state.won && state.reviewing,
     winStats: {

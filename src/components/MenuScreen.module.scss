@@ -69,6 +69,34 @@
   color: $text-faint;
 }
 
+.settingsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+  padding: 8px 18px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    border-color: $purple-deep;
+    color: $purple-deep;
+  }
+}
+
+.settingsIcon {
+  width: 16px;
+  height: 16px;
+}
+
 .howTo {
   margin-top: 44px;
   width: 100%;
