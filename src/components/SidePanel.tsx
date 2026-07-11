@@ -13,6 +13,7 @@ interface SidePanelProps {
   onErase: () => void
   onNotesToggle: () => void
   onResetToggle: () => void
+  onAiSolve: () => void
 }
 
 export function SidePanel(props: SidePanelProps) {
@@ -72,6 +73,9 @@ export function SidePanel(props: SidePanelProps) {
           onClick={props.onResetToggle}
         >
           Reset <span className={styles.kbdReset}>R</span>
+        </button>
+        <button type="button" className={styles.aiSolveBtn} onClick={props.onAiSolve}>
+          AI Solve — watch it finish
         </button>
       </div>
 

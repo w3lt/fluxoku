@@ -48,6 +48,14 @@ export interface GameState {
   justOpened: number[]
   /** Cells flashed red after an illegal placement. */
   conflicts: number[]
+  /** AI playback: stepping through a precomputed solving route. */
+  aiSolving: boolean
+  /** Route steps already applied in the current AI run. */
+  aiStep: number
+  /** Total steps in the current AI run. */
+  aiTotal: number
+  /** Fast AI playback; persists across puzzles in a session. */
+  aiFast: boolean
 }
 
 export const initialGameState: GameState = {
@@ -68,4 +76,8 @@ export const initialGameState: GameState = {
   toast: '',
   justOpened: [],
   conflicts: [],
+  aiSolving: false,
+  aiStep: 0,
+  aiTotal: 0,
+  aiFast: false,
 }

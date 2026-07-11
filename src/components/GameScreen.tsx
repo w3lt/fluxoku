@@ -1,6 +1,6 @@
 import type { FluxokuGame } from '../game/useFluxokuGame'
 import { Board } from './Board'
-import { ResetModeBanner, TrappedBanner } from './GameBanners'
+import { AiSolvingBanner, ResetModeBanner, TrappedBanner } from './GameBanners'
 import { Logo } from './Logo'
 import { SettingsButton } from './SettingsButton'
 import { SidePanel } from './SidePanel'
@@ -42,6 +42,15 @@ export function GameScreen({ game, onOpenSettings }: GameScreenProps) {
         />
       )}
 
+      {state.aiSolving && (
+        <AiSolvingBanner
+          status={game.aiStatus}
+          speedLabel={game.aiSpeedLabel}
+          onToggleSpeed={actions.aiToggleSpeed}
+          onTakeOver={actions.aiStop}
+        />
+      )}
+
       {state.resetMode && <ResetModeBanner onCancel={actions.cancelReset} />}
 
       <div className={styles.layout}>
@@ -62,6 +71,7 @@ export function GameScreen({ game, onOpenSettings }: GameScreenProps) {
               onErase={actions.erase}
               onNotesToggle={actions.toggleNotes}
               onResetToggle={actions.toggleResetMode}
+              onAiSolve={actions.aiSolve}
             />
           </>
         )}

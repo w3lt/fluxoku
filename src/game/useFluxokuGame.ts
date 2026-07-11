@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { conflictInfo, reachList, reaches } from '../engine/board'
 import { generatePuzzle, type DifficultyKey } from '../engine/generator'
+import { planAiSolve, type AiStep } from './aiSolve'
 import { computeTrapped, fmtTime, isSolved, legalMoveFrom } from './logic'
 import type { GameOptions } from './options'
 import { initialGameState, type GameSession, type GameState, type Snapshot } from './types'
@@ -13,6 +14,8 @@ const TOAST_MS = 2400
 const OPENED_PULSE_MS = 850
 const CONFLICT_FLASH_MS = 950
 const UNDO_LIMIT = 160
+const AI_STEP_NORMAL_MS = 340
+const AI_STEP_FAST_MS = 90
 
 export interface FluxokuActions {
   start: (difficulty: DifficultyKey) => void
@@ -27,6 +30,9 @@ export interface FluxokuActions {
   toggleNotes: () => void
   toggleResetMode: () => void
   cancelReset: () => void
+  aiSolve: () => void
+  aiStop: () => void
+  aiToggleSpeed: () => void
 }
 
 export interface FluxokuGame {
@@ -49,6 +55,8 @@ export interface FluxokuGame {
   showWin: boolean
   showReviewBar: boolean
   winStats: { time: string; moves: string; resets: string; undos: string }
+  aiStatus: string
+  aiSpeedLabel: string
   actions: FluxokuActions
 }
 
@@ -59,6 +67,8 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
   const pulseTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const conflictTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const generateTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const aiTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const aiPath = useRef<AiStep[] | null>(null)
 
   const patch = (partial: Partial<GameState>) => {
     setState((s) => ({ ...s, ...partial }))
@@ -113,8 +123,12 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
   }
 
   const start = (difficulty: DifficultyKey) => {
-    setState(() => ({
+    clearTimeout(aiTimer.current)
+    aiPath.current = null
+    setState((s) => ({
       ...initialGameState,
+      // Playback speed is a session preference, not per-puzzle state.
+      aiFast: s.aiFast,
       screen: 'playing',
       generating: true,
     }))
@@ -146,7 +160,12 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
   const restart = () => {
     const g = state.game
     if (!g) return
+    clearTimeout(aiTimer.current)
+    aiPath.current = null
     patch({
+      aiSolving: false,
+      aiStep: 0,
+      aiTotal: 0,
       game: { ...g, grid: g.givens.slice(), ball: g.startBall, resetsLeft: g.resetsTotal },
       notes: new Array<number>(81).fill(0),
       selected: g.startBall,
@@ -166,7 +185,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
 
   const placeDigit = (d: number) => {
     const g = state.game
-    if (!g || state.won) return
+    if (!g || state.won || state.aiSolving) return
     const i = state.selected
     if (i === null) {
       showToast('Select a reachable cell first.')
@@ -237,7 +256,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
 
   const erase = () => {
     const g = state.game
-    if (!g || state.won) return
+    if (!g || state.won || state.aiSolving) return
     const i = state.selected
     if (i === null || !g.grid[i]) {
       showToast('Select a filled cell to erase.')
@@ -258,6 +277,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
   }
 
   const undo = () => {
+    if (state.aiSolving) return
     const g = state.game
     if (!g || !state.undoStack.length) {
       if (g) showToast('Nothing to undo.')
@@ -286,7 +306,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
 
   const toggleResetMode = () => {
     const g = state.game
-    if (!g || state.won) return
+    if (!g || state.won || state.aiSolving) return
     if (state.resetMode) {
       patch({ resetMode: false })
       return
@@ -321,9 +341,46 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     })
   }
 
+  // ---------- AI solve ----------
+
+  const aiSolve = () => {
+    const g = state.game
+    if (!g || state.won || state.aiSolving) return
+    const path = planAiSolve(g.grid, g.ball)
+    if (!path) {
+      showToast('No path found from here — undo a move first.')
+      return
+    }
+    if (!path.length) {
+      showToast('Nothing left to solve.')
+      return
+    }
+    // One snapshot for the whole run: a single undo rolls back everything the AI does.
+    const stack = pushUndo(g)
+    aiPath.current = path
+    patch({
+      aiSolving: true,
+      aiStep: 0,
+      aiTotal: path.length,
+      undoStack: stack,
+      resetMode: false,
+      selected: null,
+      notesMode: false,
+    })
+  }
+
+  /** Halts AI playback; `msg` is toasted only when playback was running. */
+  const stopAi = (msg?: string) => {
+    clearTimeout(aiTimer.current)
+    aiPath.current = null
+    if (!state.aiSolving) return
+    setState((s) => ({ ...s, aiSolving: false, selected: s.game ? s.game.ball : s.selected }))
+    if (msg) showToast(msg)
+  }
+
   const cellClick = (i: number) => {
     const g = state.game
-    if (!g) return
+    if (!g || state.aiSolving) return
     if (state.resetMode) {
       if (!g.grid[i]) {
         showToast('The ball must stay on a filled cell.')
@@ -341,6 +398,13 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
   const handleKey = (e: KeyboardEvent) => {
     if (state.screen !== 'playing' || !state.game) return
     const k = e.key
+    if (state.aiSolving) {
+      if (k === 'Escape') {
+        e.preventDefault()
+        stopAi('You have the board back.')
+      }
+      return
+    }
     if (k === 'Escape') {
       e.preventDefault()
       if (state.resetMode) patch({ resetMode: false })
@@ -396,6 +460,54 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // AI playback: one placement per delay. Each applied step bumps `aiStep`,
+  // which re-arms this effect for the next one; flipping `aiFast` mid-wait
+  // reschedules the pending step with the new delay.
+  useEffect(() => {
+    if (!state.aiSolving) return
+    if (!aiPath.current?.[state.aiStep]) {
+      // Route exhausted without a win: only reachable if the path was lost,
+      // e.g. a hot-reload dropped the ref. Fail closed instead of hanging.
+      setState((s) => ({ ...s, aiSolving: false }))
+      return
+    }
+    const delay = state.aiFast ? AI_STEP_FAST_MS : AI_STEP_NORMAL_MS
+    aiTimer.current = setTimeout(() => {
+      setState((s) => {
+        const g = s.game
+        const step = aiPath.current?.[s.aiStep]
+        if (!s.aiSolving || !g || !step) return s
+        const grid = g.grid.slice()
+        grid[step.cell] = step.digit
+        const notes = s.notes.slice()
+        notes[step.cell] = 0
+        const oldReach = new Set(reachList(g.ball).filter((j) => !grid[j]))
+        const justOpened = reachList(step.cell).filter((j) => !grid[j] && !oldReach.has(j))
+        // The route always ends on a valid full board, so full means solved.
+        const won = !grid.includes(0)
+        return {
+          ...s,
+          game: { ...g, grid, ball: step.cell },
+          notes,
+          aiStep: s.aiStep + 1,
+          moves: s.moves + 1,
+          selected: step.cell,
+          justOpened,
+          won,
+          aiSolving: !won,
+          elapsedSec: won ? Math.floor((Date.now() - s.startTime) / 1000) : s.elapsedSec,
+        }
+      })
+      // Re-armed every step, so the opened pulse only clears after the last one.
+      clearTimeout(pulseTimer.current)
+      pulseTimer.current = setTimeout(
+        () => setState((s) => ({ ...s, justOpened: [] })),
+        OPENED_PULSE_MS,
+      )
+    }, delay)
+    return () => clearTimeout(aiTimer.current)
+  }, [state.aiSolving, state.aiStep, state.aiFast])
+
   // One-second tick drives the visible timer while a game is running.
   useEffect(() => {
     const timer = setInterval(() => {
@@ -441,7 +553,7 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
     tokens,
     showTimer: options.showTimer && ready,
     timerText: fmtTime(state.elapsedSec),
-    trappedVisible: trapped && !state.resetMode,
+    trappedVisible: trapped && !state.resetMode && !state.aiSolving,
     trappedSub: canReset ? 'Reset possession or undo your last move.' : 'No resets left. Undo or restart.',
     canReset,
     resetBtnLabel: g ? `Use reset (${g.resetsLeft} left)` : '',
@@ -456,11 +568,16 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       resets: g ? `${g.resetsTotal - g.resetsLeft} / ${g.resetsTotal}` : '',
       undos: String(state.undos),
     },
+    aiStatus: `${state.aiStep} / ${state.aiTotal} moves`,
+    aiSpeedLabel: state.aiFast ? 'Speed: fast' : 'Speed: normal',
     actions: {
       start,
       restart,
       playAgain: () => start(g ? g.difficulty : 'normal'),
-      goMenu: () => patch({ screen: 'menu', won: false, reviewing: false, resetMode: false }),
+      goMenu: () => {
+        stopAi()
+        patch({ screen: 'menu', won: false, reviewing: false, resetMode: false })
+      },
       review: () => patch({ reviewing: true }),
       cellClick,
       placeDigit,
@@ -469,6 +586,9 @@ export function useFluxokuGame(options: GameOptions): FluxokuGame {
       toggleNotes: () => setState((s) => ({ ...s, notesMode: !s.notesMode })),
       toggleResetMode,
       cancelReset: () => patch({ resetMode: false }),
+      aiSolve,
+      aiStop: () => stopAi('You have the board back. Undo rolls back the AI’s moves.'),
+      aiToggleSpeed: () => setState((s) => ({ ...s, aiFast: !s.aiFast })),
     },
   }
 }

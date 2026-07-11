@@ -117,6 +117,26 @@
   color: #f8f5ff;
 }
 
+.aiSolveBtn {
+  grid-column: span 2;
+  padding: 12px 10px;
+  border: 1px solid $line;
+  border-radius: 12px;
+  background: $surface;
+  font-size: 14px;
+  font-weight: 600;
+  color: $purple-deep;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    border-color: $purple;
+    background: #f8f1fe;
+  }
+}
+
 .kbd {
   color: $kbd-hint;
   font-weight: 500;

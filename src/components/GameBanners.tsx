@@ -36,6 +36,36 @@ export function TrappedBanner({ sub, canReset, resetLabel, onReset, onUndo, onRe
   )
 }
 
+interface AiSolvingBannerProps {
+  status: string
+  speedLabel: string
+  onToggleSpeed: () => void
+  onTakeOver: () => void
+}
+
+/** Progress banner shown while the AI plays out its solving route. */
+export function AiSolvingBanner({ status, speedLabel, onToggleSpeed, onTakeOver }: AiSolvingBannerProps) {
+  return (
+    <div className={styles.container}>
+      <div className={styles.ai}>
+        <div className={styles.aiInfo}>
+          <div className={styles.aiDot} />
+          <div className={styles.aiTitle}>AI is solving…</div>
+          <div className={styles.aiStatus}>{status}</div>
+        </div>
+        <div className={styles.aiActions}>
+          <button type="button" className={styles.aiSpeedBtn} onClick={onToggleSpeed}>
+            {speedLabel}
+          </button>
+          <button type="button" className={styles.aiTakeOverBtn} onClick={onTakeOver}>
+            Take over
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface ResetModeBannerProps {
   onCancel: () => void
 }

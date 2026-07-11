@@ -65,6 +65,79 @@
   }
 }
 
+.ai {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: $ai-banner-bg;
+  border: 1px solid $ai-banner-border;
+  border-radius: 14px;
+  padding: 12px 18px;
+}
+
+.aiInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $accent-gradient;
+}
+
+.aiTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: $purple-deep;
+}
+
+.aiStatus {
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.aiActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aiSpeedBtn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 1px solid $ai-banner-border;
+  border-radius: 999px;
+  background: transparent;
+  color: $purple-deep;
+  cursor: pointer;
+
+  &:hover {
+    background: $ai-banner-hover-bg;
+  }
+}
+
+.aiTakeOverBtn {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 999px;
+  background: $banner-bg;
+  color: $banner-text;
+  cursor: pointer;
+
+  &:hover {
+    background: $ink-soft;
+  }
+}
+
 .resetMode {
   display: flex;
   align-items: center;
